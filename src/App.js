@@ -1,25 +1,55 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import React from "react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const ref = React.useRef(null);
+	const [answer, setAnswer] = React.useState([["", "", ""]]);
+	const getMatrix = () => {
+		const fromLocalStorage = localStorage.getItem("matrix");
+		const parsed = JSON.parse(fromLocalStorage);
+		return parsed;
+	};
+	const convertAlphabetToIndex = (alphabet) => {
+		return alphabet.toLowerCase().charCodeAt(0) - 97;
+	};
+	const calculateAnswer = () => {
+		if (ref.current !== null && ref.current.value) {
+			const value = ref.current.value;
+			const firstCode = value.slice(0, 2);
+			const secondCode = value.slice(2, 4);
+			const thirdCode = value.slice(4, 6);
+			if (
+				firstCode[0] &&
+				firstCode[1] &&
+				secondCode[0] &&
+				secondCode[1] &&
+				thirdCode[0] &&
+				thirdCode[1]
+			) {
+				const matrix = getMatrix();
+				setAnswer([
+					matrix[firstCode[1] - 1][convertAlphabetToIndex(firstCode[0])],
+					matrix[secondCode[1] - 1][convertAlphabetToIndex(secondCode[0])],
+					matrix[thirdCode[1] - 1][convertAlphabetToIndex(thirdCode[0])],
+				]);
+			}
+		}
+	};
+	React.useEffect(() => {
+		getMatrix();
+	}, []);
+	return (
+		<div className="App">
+			<header className="App-header">
+				<div>
+					{answer[0]} | {answer[1]} | {answer[2]}
+				</div>
+				<div>--------</div>
+				<input ref={ref} onChange={calculateAnswer} />
+			</header>
+		</div>
+	);
 }
 
 export default App;
