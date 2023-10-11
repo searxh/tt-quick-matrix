@@ -6,8 +6,9 @@ function App() {
 	const ref = React.useRef(null);
 	const [answer, setAnswer] = React.useState([["", "", ""]]);
 	const getMatrix = () => {
-		const fromLocalStorage = localStorage.getItem("matrix");
-		const parsed = JSON.parse(fromLocalStorage);
+		const matrixFromEnv = process.env.REACT_APP_MATRIX;
+		if (process.env.REACT_APP_MATRIX === undefined) return;
+		const parsed = JSON.parse(matrixFromEnv);
 		return parsed;
 	};
 	const convertAlphabetToIndex = (alphabet) => {
@@ -37,6 +38,7 @@ function App() {
 		}
 	};
 	React.useEffect(() => {
+		console.log(process.env.REACT_APP_MATRIX);
 		getMatrix();
 	}, []);
 	return (
